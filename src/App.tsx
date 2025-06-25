@@ -1,7 +1,8 @@
 // import Cart from "./components/cart"
-// import { CartProvider } from "./hooks/use-carts"
+import { CartProvider } from "./hooks/use-carts"
+// import Footer from "./components/footer"
+import Header from "./components/header"
 
-import Footer from "./components/footer"
 
 
 function App() {
@@ -9,10 +10,12 @@ function App() {
 
   return (
     <>
-    {/* // <CartProvider> */}
-    //   {/* <Cart /> */}
-    {/* // </CartProvider> */}
-    <Footer />
+    <CartProvider>
+    {/* <Cart /> */}
+    <Header />
+    </CartProvider>
+    {/* <Footer /> */}
+    
     </>
   )
 }
