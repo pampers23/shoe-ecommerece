@@ -18,10 +18,10 @@ const Hero = () => {
               From casual sneakers to elegant dress shoes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
                 Shop Now <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-slate-900">
+              <Button variant="outline" size="lg" className="border-white text-black hover:bg-white hover:text-slate-900 cursor-pointer">
                 View Collection
               </Button>
             </div>

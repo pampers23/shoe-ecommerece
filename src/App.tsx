@@ -1,8 +1,7 @@
 // import Cart from "./components/cart"
-import { CartProvider } from "./hooks/use-carts"
+// import { CartProvider } from "./hooks/use-carts"
 // import Footer from "./components/footer"
-import Header from "./components/header"
-import Hero from "./components/hero"
+
 
 
 
@@ -11,11 +10,11 @@ function App() {
 
   return (
     <>
-    <CartProvider>
+    {/* <CartProvider> */}
     {/* <Cart /> */}
-      <Header />
-      <Hero />
-    </CartProvider>
+      {/* <Header />
+      <Hero /> */}
+    {/* </CartProvider> */}
     {/* <Footer /> */}
     
     </>
