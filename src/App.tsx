@@ -2,6 +2,7 @@
 import { CartProvider } from "./hooks/use-carts"
 // import Footer from "./components/footer"
 import Header from "./components/header"
+import Hero from "./components/hero"
 
 
 
@@ -12,7 +13,8 @@ function App() {
     <>
     <CartProvider>
     {/* <Cart /> */}
-    <Header />
+      <Header />
+      <Hero />
     </CartProvider>
     {/* <Footer /> */}
     
