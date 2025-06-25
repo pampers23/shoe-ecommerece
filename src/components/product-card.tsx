@@ -1,23 +1,19 @@
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
-import { UseCarts } from "@/hooks/use-carts";
+import { UseCarts } from '@/hooks/use-carts';
 import { toast } from "sonner"
-import { useState } from "react";
-
+import { useState } from 'react';
 
 interface Product {
   id: number;
   name: string;
   price: number;
-  ogirinalPrice?: number;
+  originalPrice?: number;
   image: string;
   category: string;
-  isOnSale?: boolean;
+  isOnSale: boolean;
   rating: number;
   colors: string[];
 }
@@ -25,7 +21,6 @@ interface Product {
 interface ProductCardProps {
   product: Product;
 }
-
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -38,21 +33,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
       name: product.name,
       price: product.price,
       image: product.image,
-      color: selectedColor,
+      color: selectedColor
     });
-
+    
     toast(
       <>
         <div className="font-semibold">Add to cart</div>
         <div>{`${product.name} in ${selectedColor} has been added to your cart.`}</div>
       </>
-    )
+    )  
   };
 
-  const discountPercentage = product.ogirinalPrice
-    ? Math.round(((product.ogirinalPrice = product.price) / product.ogirinalPrice) * 100)
+  const discountPercentage = product.originalPrice 
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
-
 
   return (
     <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -62,7 +56,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             -{discountPercentage}%
           </Badge>
         )}
-
+        
         <Button
           variant="ghost"
           size="icon"
@@ -74,7 +68,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
         </Button>
 
-        <div className="aspect-square flex -items justify-center text-8xl group-hover:scale-110 transition-transform duration-300">
+        <div className="aspect-square flex items-center justify-center text-8xl p-8 group-hover:scale-110 transition-transform duration-300">
           {product.image}
         </div>
       </div>
@@ -92,19 +86,19 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
         <div className="flex items-center space-x-2">
           <span className="text-xl font-bold">${product.price}</span>
-          {product.ogirinalPrice && (
+          {product.originalPrice && (
             <span className="text-sm text-muted-foreground line-through">
-              ${product.ogirinalPrice}
+              ${product.originalPrice}
             </span>
           )}
         </div>
 
-        {/* color selection */}
+        {/* Color Selection */}
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">Colors:</p>
           <div className="flex space-x-2">
             {product.colors.map((color) => (
-              <Button
+              <button
                 key={color}
                 onClick={() => setSelectedColor(color)}
                 className={`w-6 h-6 rounded-full border-2 transition-all ${
@@ -127,16 +121,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
 
-        <Button
+        <Button 
           className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
           onClick={handleAddToCart}
         >
-          <ShoppingCart />
+          <ShoppingCart className="mr-2 h-4 w-4" />
           Add to Cart
         </Button>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default ProductCard
+export default ProductCard;

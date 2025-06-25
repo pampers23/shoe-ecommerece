@@ -1,5 +1,3 @@
-
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
@@ -8,7 +6,7 @@ const Hero = () => {
     <section className="relative bg-gradient-to-r from-slate-900 to-slate-700 text-white flex">
       <div className="container mx-auto px-4 py-24 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
+          <div className="space-y-8 ml-20">
             <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
               Step Into
               <span className="text-blue-400 block">Style & Comfort</span>
