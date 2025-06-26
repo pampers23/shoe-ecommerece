@@ -14,7 +14,7 @@ const products = [
         originalPrice: 159.99,
         image: '👟',
         category: 'Men',
-        inOnSale: true,
+        isOnSale: true,
         rating: 4.8,
         colors: ['Black', 'White', 'Red']
     },
@@ -24,7 +24,7 @@ const products = [
         price: 89.99,
         image: '🏃‍♂️',
         category: 'Women',
-        inOnSale: false,
+        isOnSale: false,
         rating: 4.6,
         colors: ['Pink', 'Blue', 'Gray']
     },
@@ -34,7 +34,7 @@ const products = [
         price: 109.99,
         image: '👟',
         category: 'Men',
-        inOnSale: false,
+        isOnSale: false,
         rating: 4.7,
         colors: ['Black', 'White']
     },
@@ -45,7 +45,7 @@ const products = [
         originalPrice: 79.99,
         image: '👶',
         category: 'Kids',
-        inOnSale: true,
+        isOnSale: true,
         rating: 4.9,
         colors: ['Red', 'Blue', 'Yellow']
     },
@@ -55,7 +55,7 @@ const products = [
         price: 149.99,
         image: '👞',
         category: 'Men',
-        inOnSale: false,
+        isOnSale: false,
         rating: 4.5,
         colors: ['Brown', 'Black']
     },
@@ -66,7 +66,7 @@ const products = [
         originalPrice: 249.99,
         image: '🏃‍♀️',
         category: 'Women',
-        inOnSale: true,
+        isOnSale: true,
         rating: 4.8,
         colors: ['White', 'Pink', 'Black']
     },
@@ -76,7 +76,7 @@ const products = [
         price: 69.99,
         image: '👟',
         category: 'Women',
-        inOnSale: false,
+        isOnSale: false,
         rating: 4.4,
         colors: ['White', 'Navy', 'Red']
     },
@@ -86,7 +86,7 @@ const products = [
         price: 179.99,
         image: '🏃‍♂️',
         category: 'Men',
-        inOnSale: false,
+        isOnSale: false,
         rating: 4.9,
         colors: ['Black', 'Gray', 'Blue']
     },
@@ -99,7 +99,7 @@ const ProductGrid = () => {
     const filteredProducts = activeCategory === 'All'
         ? products
         : activeCategory === 'Sale'
-        ? products.filter(product => product.inOnSale)
+        ? products.filter(product => product.isOnSale)
         : products.filter(product => product.category === activeCategory);
 
 

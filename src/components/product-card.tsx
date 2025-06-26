@@ -13,7 +13,7 @@ interface Product {
   originalPrice?: number;
   image: string;
   category: string;
-  isOnSale: boolean;
+  isOnSale?: boolean;
   rating: number;
   colors: string[];
 }
