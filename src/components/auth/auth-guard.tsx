@@ -1,14 +1,14 @@
-// import type { ReactNode } from "react";
-// import { Navigate } from "react-router";
+    // import type { ReactNode } from "react";
+    // import { Navigate } from "react-router";
 
-// function AuthGuard({ children }: { children: ReactNode }) {
-// //   const { session } = useSession();
+    // function AuthGuard({ children }: { children: ReactNode }) {
+    // //   const { session } = useSession();
 
-//   if (!session) {
-//     return <Navigate to={"/login"} />;
-//   }
+    //   if (!session) {
+    //     return <Navigate to={"/login"} />;
+    //   }
 
-//   return <>{children}</>;
-// }
+    //   return <>{children}</>;
+    // }
 
-// export default AuthGuard;
+    // export default AuthGuard;
