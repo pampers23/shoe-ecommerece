@@ -69,7 +69,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </Button>
 
         <div className="aspect-square flex items-center justify-center text-8xl p-8 group-hover:scale-110 transition-transform duration-300">
-          {product.image}
+          <img 
+            src={product.image}
+            alt={product.name}
+            className='w-full h-full object-contain drop-shadow-lg'
+          />
         </div>
       </div>
 
