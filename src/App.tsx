@@ -1,7 +1,9 @@
+import Login from "./pages/public/login";
 
 
 const App = () => (
   <>
+  <Login />
   </>
 );
 
