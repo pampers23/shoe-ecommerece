@@ -1,14 +1,14 @@
-// import { UserSessionContext } from "@/context/user-session-context";
-// import { useContext } from "react";
+import { UserSessionContext } from "@/context/user-session-context";
+import { useContext } from "react";
 
-// function useSession() {
-//   const context = useContext(UserSessionContext);
+function useSession() {
+  const context = useContext(UserSessionContext);
 
-//   if (!context) {
-//     throw new Error("Must be inside the context provider!");
-//   }
+  if (!context) {
+    throw new Error("Must be inside the context provider!");
+  }
 
-//   return context;
-// }
+  return context;
+}
 
-// export default useSession;
+export default useSession;
