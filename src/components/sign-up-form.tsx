@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Link } from "react-router-dom"
 
 export function SignUpForm({
   className,
@@ -57,9 +58,9 @@ export function SignUpForm({
       </div>
       <div className="text-center text-sm">
        Already have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
+        <Link to="/login" className="underline underline-offset-4">
           Login
-        </a>
+        </Link>
       </div>
     </form>
   )
