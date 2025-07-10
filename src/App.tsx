@@ -1,9 +1,10 @@
-import Login from "./pages/public/login";
+
+import AppRoutes from "./lib/routes/app-routes";
 
 
 const App = () => (
   <>
-  <Login />
+  <AppRoutes />
   </>
 );
 
