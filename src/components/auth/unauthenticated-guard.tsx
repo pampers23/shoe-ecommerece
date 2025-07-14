@@ -6,7 +6,7 @@ function UnauthenticatedGuard({ children }: { children: ReactNode }) {
   const { session, passwordResetState } = useSession();
 
   if (session && !passwordResetState) {
-    return <Navigate to={""} />;
+    return <Navigate to={"/index"} />;
   }
 
   return <>{children}</>;

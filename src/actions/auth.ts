@@ -1,19 +1,19 @@
 import { supabase } from "@/lib/client";
 import { AuthError } from "@supabase/supabase-js";
-import type { LoginSchema, SignupSchema } from "@/zod-schema";
+import type { LoginSchema, SignUpSchema } from "@/zod-schema";
 import { toast } from "sonner";
 
-export async function userSignUp({ firstName, lastName, email, password }:SignupSchema ) {
+export async function userSignUp({ firstName, lastName, email, password }:SignUpSchema ) {
     try {
         const { error } = await supabase.auth.signUp({
+            email,
+            password,
             options: {
                 data: {
                     firstName,
                     lastName,
                 },
             },
-            email,
-            password
         });
 
         if (error) {
@@ -42,5 +42,18 @@ export async function userLogin({ email, password }: LoginSchema) {
     } catch (error) {
         const err = error as AuthError;
         toast.error(err.message);
+    }
+}
+
+export async function userLogout() {
+    try {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+            throw new Error(error.message)
+        }
+    } catch (error) {
+        const err = error as AuthError;
+        toast.error(err.message)
     }
 }

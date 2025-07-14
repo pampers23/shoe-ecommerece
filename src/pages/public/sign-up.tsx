@@ -1,24 +1,26 @@
-import { SignUpForm } from "@/components/sign-up-form"
+import SignUpForm from "@/components/sign-up-form";
+import basketball from "@/assets/bas-sign-back.jpg"
 
-export default function SignUp() {
+const SignUp = () => {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
+    <div className="min-h-screen flex">
+      <div className="w-full grid lg:grid-cols-2">
+        {/* Sign Up Form Section */}
+        <div className="flex items-center justify-center">
+          <SignUpForm />
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <SignUpForm />
-          </div>
+        
+        {/* Background Image Section */}
+        <div className="hidden lg:block relative overflow-hidden">
+          <img 
+            src={basketball} 
+            alt="Basketball Background"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          />
         </div>
-      </div>
-      <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default SignUp;
