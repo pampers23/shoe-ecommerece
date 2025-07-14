@@ -22,8 +22,11 @@ import {
 } from "@/components/ui/form"
 import { PasswordInput } from "./ui/password-input"
 import { DotPulse } from "ldrs/react";
+// import { useNavigate } from "react-router-dom";
+
 
 function SignUpForm() {
+  // const navigate = useNavigate();
   const { mutate, isPending } = useMutation({
     mutationFn: userSignUp,
   });
