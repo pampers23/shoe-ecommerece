@@ -7,17 +7,32 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Menu, ShoppingCart, Search, User } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Menu, ShoppingCart, Search, User, LogOut, UserCog } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { UseCarts } from '@/hooks/use-carts';
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { userLogout } from "@/actions/auth";
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { items } = UseCarts();
     const navigate = useNavigate();
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+    const handleLogout = async () => {
+        // Implement logout logic here
+        console.log("User logged out");
+        await userLogout();
+        navigate('/login');
+    }
 
 
   return (
@@ -51,14 +66,24 @@ const Header = () => {
 
             {/* actions */}
             <div className="flex items-center space-x-4">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hidden md:flex"
-                    onClick={() => navigate('/profile')}
-                >
-                    <User className="h-5 w-5" />
-                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="hidden md:flex">
+                            <UserCog className="h-5 w-5" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                                <User className="h-4 w-4 mr-2" />
+                                Profile
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={handleLogout}>
+                                <LogOut className="h-4 w-4 mr-2" />
+                                Logout
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                </DropdownMenu>
 
                 <Button
                     variant="ghost"
@@ -86,7 +111,7 @@ const Header = () => {
                         <SheetHeader>
                             <SheetTitle>Menu</SheetTitle>
                         </SheetHeader>
-                        <nav className="flex flex-col space-y-4 mt-6">
+                        <nav className="flex flex-col space-y-4 mt-6 ml-4">
                             <a href="#" className="text-lg font-medium hover:text-primary transition-colors">Men</a>
                             <a href="#" className="text-lg font-medium hover:text-primary transition-colors">Women</a>
                             <a href="#" className="text-lg font-medium hover:text-primary transition-colors">Kids</a>
@@ -99,7 +124,17 @@ const Header = () => {
                                     setIsMenuOpen(false);
                                 }}
                             >
-                              Profile  
+                              Profile
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                className="justify-start p-0 h-auto text-lg font-medium hover:text-primary"
+                                onClick={() => {
+                                    handleLogout();
+                                    setIsMenuOpen(false);
+                                }}
+                            >
+                                Logout
                             </Button>
                         </nav>
                     </SheetContent>
