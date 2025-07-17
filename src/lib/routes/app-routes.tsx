@@ -36,16 +36,23 @@ const AppRoutes = () => {
         />
 
         {/* Customer Side */}
-        <Route path="index" element={<Index />}>
           <Route
-            path="cart"
+            path="/index"
+            element={
+              <AuthGuard>
+                <Index />
+              </AuthGuard>
+            }
+          />
+
+          <Route
+            path="/cart"
             element={
               <AuthGuard>
                 <Cart />
               </AuthGuard>
             }
           />
-        </Route>
       </Routes>
     </BrowserRouter>
   )

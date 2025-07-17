@@ -31,7 +31,7 @@ export async function userSignUp({ firstName, lastName, email, password }:SignUp
 
 export async function userLogin({ email, password }: LoginSchema) {
     try {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
         });
@@ -39,9 +39,12 @@ export async function userLogin({ email, password }: LoginSchema) {
         if (error) {
             throw new Error(error.message);
         }
+
+        return data;
     } catch (error) {
         const err = error as AuthError;
         toast.error(err.message);
+        throw err;
     }
 }
 

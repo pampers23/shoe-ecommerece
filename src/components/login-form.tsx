@@ -24,12 +24,17 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import { DotPulse } from "ldrs/react"
-
+import { useNavigate } from "react-router-dom";
 
 
 function LoginForm(){
+  const navigate = useNavigate();
   const { mutate, isPending } = useMutation({
     mutationFn: userLogin,
+    onSuccess: (data) => {
+      console.log('Login successful', data?.session);
+      navigate("/", { replace: true });
+    }
   });
 
   const form = useForm<LoginSchema>({
@@ -76,11 +81,6 @@ function LoginForm(){
                   </FormItem>
                 )}
               />
-              <div className="w-max ml-auto text-sm">
-                <Link to="/forgot-password" className="underline">
-                  Forgot Password?
-                </Link>
-              </div>
               <FormField
                 control={form.control}
                 name="password"
@@ -88,6 +88,9 @@ function LoginForm(){
                   <FormItem className="grid gap-2">
                     <div className="flex justify-between items-center">
                       <FormLabel htmlFor="password">Password</FormLabel>
+                      <Link to="/forgot-password" className="text-sm underline underline-offset-2">
+                        Forgot Password?
+                      </Link>
                     </div>
                     <FormControl>
                       <PasswordInput

@@ -22,13 +22,16 @@ import {
 } from "@/components/ui/form"
 import { PasswordInput } from "./ui/password-input"
 import { DotPulse } from "ldrs/react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 function SignUpForm() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { mutate, isPending } = useMutation({
     mutationFn: userSignUp,
+    onSuccess: () => {
+      navigate("/index", { replace: true });
+    }
   });
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
@@ -141,7 +144,7 @@ function SignUpForm() {
           </Form>
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}
-            <Link to="/login" className="underline underline-offset-4">
+            <Link to="/login" className="underline underline-offset-2">
               Login
             </Link>
           </div>
