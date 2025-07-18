@@ -44,7 +44,7 @@ const Cart = () => {
                                 items.map((item) => (
                                     <div 
                                         key={`${item.id}-${item.color}`} 
-                                        className="flex text-center space-x-4 p-6 border rounded-lg bg-card"
+                                        className="flex text-center gap-6 p-6 border rounded-lg bg-card"
                                     >
                                        <img 
                                         src={item.image} 
@@ -52,13 +52,16 @@ const Cart = () => {
                                         className="w-24 h-24 object-cover rounded-md"
                                         />
 
-                                        <div className="flex-1 space-y-2">
+                                        <div className="space-y-1 mt-6">
                                             <h4 className="font-medium text-lg">{item.name}</h4>
                                             <p className="text-sm text-muted-foreground">Color: {item.color}</p>
+                                        </div>
+
+                                        <div className="flex flex-1 justify-center mt-6">
                                             <p className="font-semibold text-lg">${item.price}</p>
                                         </div>
 
-                                        <div className="flex items-center space-x-3">
+                                        <div className="flex items-center space-x-3 ml-auto">
                                             <Button
                                                 variant="outline"
                                                 size="icon"
