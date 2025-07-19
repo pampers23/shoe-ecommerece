@@ -5,18 +5,7 @@ import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { UseCarts } from '@/hooks/use-carts';
 import { toast } from "sonner"
 import { useState } from 'react';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  category: string;
-  isOnSale?: boolean;
-  rating: number;
-  colors: string[];
-}
+import type { Product } from '@/type';
 
 interface ProductCardProps {
   product: Product;
@@ -24,7 +13,10 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  const colorOptions = product.colors ? product.colors.split('|') : [];
+  const [selectedColor, setSelectedColor] = useState(
+  colorOptions.length > 0 ? colorOptions[0] : ''
+);
   const { addItem } = UseCarts();
 
   const handleAddToCart = () => {
@@ -98,10 +90,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Color Selection */}
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">Colors:</p>
-          <div className="flex space-x-2">
-            {product.colors.map((color) => (
+        <div className="flex space-x-2">
+          {colorOptions.length > 0 ? (
+            colorOptions.map((color) => (
               <button
                 key={color}
                 onClick={() => setSelectedColor(color)}
@@ -109,22 +100,24 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   selectedColor === color ? 'border-primary scale-110' : 'border-gray-300'
                 }`}
                 style={{
-                  backgroundColor: color.toLowerCase() === 'white' ? '#f8fafc' : 
-                                 color.toLowerCase() === 'black' ? '#0f172a' :
-                                 color.toLowerCase() === 'red' ? '#ef4444' :
-                                 color.toLowerCase() === 'blue' ? '#3b82f6' :
-                                 color.toLowerCase() === 'pink' ? '#ec4899' :
-                                 color.toLowerCase() === 'gray' ? '#6b7280' :
-                                 color.toLowerCase() === 'brown' ? '#a3a3a3' :
-                                 color.toLowerCase() === 'navy' ? '#1e3a8a' :
-                                 color.toLowerCase() === 'yellow' ? '#eab308' : '#6b7280'
+                  backgroundColor: color.toLowerCase() === 'white' ? '#f8fafc' :
+                                  color.toLowerCase() === 'black' ? '#0f172a' :
+                                  color.toLowerCase() === 'red' ? '#ef4444' :
+                                  color.toLowerCase() === 'blue' ? '#3b82f6' :
+                                  color.toLowerCase() === 'pink' ? '#ec4899' :
+                                  color.toLowerCase() === 'gray' ? '#6b7280' :
+                                  color.toLowerCase() === 'brown' ? '#a3a3a3' :
+                                  color.toLowerCase() === 'navy' ? '#1e3a8a' :
+                                  color.toLowerCase() === 'yellow' ? '#eab308' : '#6b7280'
                 }}
                 title={color}
               />
-            ))}
-          </div>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">No colors available</p>
+          )}
         </div>
-
+        
         <Button 
           className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
           onClick={handleAddToCart}
