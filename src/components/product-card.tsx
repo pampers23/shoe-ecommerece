@@ -6,6 +6,7 @@ import { UseCarts } from '@/hooks/use-carts';
 import { toast } from "sonner"
 import { useState } from 'react';
 import type { Product } from '@/type';
+import { COLOR_MAP } from '@/constants/colors';
 
 interface ProductCardProps {
   product: Product;
@@ -100,15 +101,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   selectedColor === color ? 'border-primary scale-110' : 'border-gray-300'
                 }`}
                 style={{
-                  backgroundColor: color.toLowerCase() === 'white' ? '#f8fafc' :
-                                  color.toLowerCase() === 'black' ? '#0f172a' :
-                                  color.toLowerCase() === 'red' ? '#ef4444' :
-                                  color.toLowerCase() === 'blue' ? '#3b82f6' :
-                                  color.toLowerCase() === 'pink' ? '#ec4899' :
-                                  color.toLowerCase() === 'gray' ? '#6b7280' :
-                                  color.toLowerCase() === 'brown' ? '#a3a3a3' :
-                                  color.toLowerCase() === 'navy' ? '#1e3a8a' :
-                                  color.toLowerCase() === 'yellow' ? '#eab308' : '#6b7280'
+                  backgroundColor: COLOR_MAP[color.toLowerCase()] || '#6b7280',
                 }}
                 title={color}
               />
@@ -117,7 +110,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <p className="text-sm text-muted-foreground">No colors available</p>
           )}
         </div>
-        
+
         <Button 
           className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
           onClick={handleAddToCart}
