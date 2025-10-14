@@ -5,15 +5,15 @@ interface CartItem {
     name: string;
     price: number;
     image: string;
-    color: string;
     quantity: number;
+    size?: string;
 }
 
 interface CartContextType {
     items: CartItem[];
     addItem: (item: Omit<CartItem, 'quantity'>) => void;
-    removeItem: (id: number, color: string) => void;
-    updateQuantity: (id: number, color: string, quantity: number) => void;
+    removeItem: (id: number) => void;
+    updateQuantity: (id: number, quantity: number) => void;
     getTotalPrice: () => number;
     clearCart: () => void;
 }
@@ -39,12 +39,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const addItem = (newItem: Omit<CartItem, 'quantity'>) => {
         setItems(prevItems => {
             const existingItem = prevItems.find(
-                item => item.id === newItem.id && item.color === newItem.color
+                item => item.id === newItem.id
             );
 
             if (existingItem) {
                 return prevItems.map(item => 
-                    item.id === newItem.id && item.color === newItem.color
+                    item.id === newItem.id
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
@@ -55,21 +55,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
 
-    const removeItem = (id: number, color: string) => {
+    const removeItem = (id: number) => {
         setItems(prevItems => 
-            prevItems.filter(item => !(item.id === id && item.color === color))
+            prevItems.filter(item => !(item.id === id))
         );
     };
 
-    const updateQuantity = (id: number, color: string, quantity: number) => {
+    const updateQuantity = (id: number, quantity: number) => {
         if (quantity <= 0) {
-            removeItem(id, color);
+            removeItem(id);
             return
         }
 
         setItems(prevItems => 
             prevItems.map(item => 
-                item.id === id && item.color === color
+                item.id === id
                     ? { ...item, quantity }
                     : item
             )

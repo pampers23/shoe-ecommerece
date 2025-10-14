@@ -3,10 +3,7 @@ export type Product = {
     id: number;
     name: string;
     price: number;
-    originalPrice?: number;
-    image: string;
+    image_url: string;
     category: string;
-    isOnSale?: boolean;
     rating: number;
-    colors: string;
 }

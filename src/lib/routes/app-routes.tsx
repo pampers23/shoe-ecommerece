@@ -4,6 +4,7 @@ import Cart from "@/components/cart";
 import Index from "@/pages/private";
 import Login from "@/pages/public/login";
 import SignUp from "@/pages/public/sign-up";
+import ProductDetails from "@/components/product-details";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 
 const AppRoutes = () => {
@@ -50,6 +51,15 @@ const AppRoutes = () => {
             element={
               <AuthGuard>
                 <Cart />
+              </AuthGuard>
+            }
+          />
+
+          <Route
+            path="/product/:id"
+            element={
+              <AuthGuard>
+                <ProductDetails />
               </AuthGuard>
             }
           />

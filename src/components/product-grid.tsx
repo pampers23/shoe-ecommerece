@@ -7,7 +7,7 @@ import { getProductsShoes } from "@/actions/private"
 import { Tailspin } from "ldrs/react"
 import type { Product } from "@/type"
 
-const categories = ['All', 'Men', 'Women', 'Kids', 'Sale'];
+const categories = ['All', 'Men', 'Women', 'Kids'];
 
 function ProductGrid() {
     const { data, isPending } = useQuery<Product[]>({
@@ -28,8 +28,6 @@ function ProductGrid() {
 
     const filteredProducts = activeCategory === 'All'
         ? data ?? []
-        : activeCategory === 'Sale'
-        ? (data ?? []).filter(product => product.isOnSale)
         : (data ?? []).filter(product => product.category === activeCategory)
 
     return (

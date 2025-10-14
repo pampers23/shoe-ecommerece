@@ -1,12 +1,13 @@
 import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Heart, ShoppingCart, Star } from 'lucide-react';
+// import { Badge } from '@/components/ui/badge';
+import { Heart, ShoppingCart, Star, Eye } from 'lucide-react';
 import { UseCarts } from '@/hooks/use-carts';
 import { toast } from "sonner"
 import { useState } from 'react';
 import type { Product } from '@/type';
-import { COLOR_MAP } from '@/constants/colors';
+// import { COLOR_MAP } from '@/constants/colors';
 
 interface ProductCardProps {
   product: Product;
@@ -14,41 +15,28 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
-  const colorOptions = product.colors ? product.colors.split('|') : [];
-  const [selectedColor, setSelectedColor] = useState(
-  colorOptions.length > 0 ? colorOptions[0] : ''
-);
   const { addItem } = UseCarts();
+  const navigate = useNavigate();
 
   const handleAddToCart = () => {
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
-      color: selectedColor
+      image: product.image_url,
     });
     
     toast(
       <>
         <div className="font-semibold">Add to cart</div>
-        <div>{`${product.name} in ${selectedColor} has been added to your cart.`}</div>
+        <div>{`${product.name} has been added to your cart.`}</div>
       </>
     )  
   };
 
-  const discountPercentage = product.originalPrice 
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0;
-
   return (
     <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
-        {product.isOnSale && (
-          <Badge className="absolute top-3 left-3 z-10 bg-red-500 hover:bg-red-600">
-            -{discountPercentage}%
-          </Badge>
-        )}
         
         <Button
           variant="ghost"
@@ -63,10 +51,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
         <div className="aspect-square flex items-center justify-center text-8xl p-8 group-hover:scale-110 transition-transform duration-300">
           <img 
-            src={product.image}
+            src={product.image_url}
             alt={product.name}
             className='w-full h-full object-contain drop-shadow-lg'
           />
+          
         </div>
       </div>
 
@@ -83,41 +72,27 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
         <div className="flex items-center space-x-2">
           <span className="text-xl font-bold">${product.price}</span>
-          {product.originalPrice && (
-            <span className="text-sm text-muted-foreground line-through">
-              ${product.originalPrice}
-            </span>
-          )}
         </div>
 
         {/* Color Selection */}
-        <div className="flex space-x-2">
-          {colorOptions.length > 0 ? (
-            colorOptions.map((color) => (
-              <button
-                key={color}
-                onClick={() => setSelectedColor(color)}
-                className={`w-6 h-6 rounded-full border-2 transition-all ${
-                  selectedColor === color ? 'border-primary scale-110' : 'border-gray-300'
-                }`}
-                style={{
-                  backgroundColor: COLOR_MAP[color.toLowerCase()] || '#6b7280',
-                }}
-                title={color}
-              />
-            ))
-          ) : (
-            <p className="text-sm text-muted-foreground">No colors available</p>
-          )}
-        </div>
 
-        <Button 
-          className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+        <div className='flex gap-2'>
+          <Button
+            variant="outline"
+            className='flex-1 cursor-pointer'
+            onClick={() => navigate(`/products/${product.id}`)}
+          >
+            <Eye className='mr-2 h-4 w-4' />
+            View
+          </Button>
+          <Button 
+          className="flex-1 group-hover:bg-primary group-hover:text-primary-foreground transition-colors cursor-pointer"
           onClick={handleAddToCart}
         >
           <ShoppingCart className="mr-2 h-4 w-4" />
           Add to Cart
         </Button>
+        </div>
       </CardContent>
     </Card>
   );
