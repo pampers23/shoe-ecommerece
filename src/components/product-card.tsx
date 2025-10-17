@@ -1,13 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-// import { Badge } from '@/components/ui/badge';
 import { Heart, ShoppingCart, Star, Eye } from 'lucide-react';
 import { UseCarts } from '@/hooks/use-carts';
 import { toast } from "sonner"
 import { useState } from 'react';
 import type { Product } from '@/type';
-// import { COLOR_MAP } from '@/constants/colors';
 
 interface ProductCardProps {
   product: Product;
@@ -80,7 +78,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <Button
             variant="outline"
             className='flex-1 cursor-pointer'
-            onClick={() => navigate(`/products/${product.id}`)}
+            onClick={() => navigate(`/product/${product.id}`)}
           >
             <Eye className='mr-2 h-4 w-4' />
             View

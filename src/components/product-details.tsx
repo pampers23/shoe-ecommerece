@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,82 +9,22 @@ import { UseCarts } from '@/hooks/use-carts'
 import { toast } from "sonner"
 import Header from './header'
 import Footer from './footer'
-
-
-
-interface Product {
-    id: number;
-    name: string;
-    price: number;
-    description: string;
-    image_url: string;
-    category: string;
-    brand: string;
-    stock: number;
-    sizes: string[];
-}
-
-const mockProduct: Product[] = [
-    {
-        id: 1,
-        name: "Air Max 270",
-        price: 150,
-        description: "The Nike Air Max 270 features a large Air unit in the heel for cushioning and a sleek, modern design.",
-        image_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
-        category: "Running",
-        brand: "Nike",
-        stock: 20,
-        sizes: ["7", "8", "9", "10", "11", "12"]
-    },
-    {
-        id: 2,
-        name: "Classic Leather",
-        price: 89.99,
-        description: "Timeless style meets comfort in the Reebok Classic Leather, perfect for everyday wear.",
-        image_url: "https://images.unsplash.com/photo-1549298916-b41d501d3772",
-        category: "Casual",
-        brand: "Adidas",
-        stock: 23,
-        sizes: ["7", "8", "9", "10", "11", "12"]
-    },
-    {
-        id: 3,
-        name: "Classic Leather",
-        price: 89.99,
-        description: "Timeless style meets comfort in the Reebok Classic Leather, perfect for everyday wear.",
-        image_url: "https://images.unsplash.com/photo-1549298916-b41d501d3772",
-        category: "Casual",
-        brand: "Adidas",
-        stock: 23,
-        sizes: ["7", "8", "9", "10", "11", "12"]
-    },
-]
+import { useQuery } from '@tanstack/react-query';
+import { getProductById } from '@/actions/private';
 
 const ProductDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const numberId = id ? Number(id) : undefined;
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const { addItem } = UseCarts();
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
+  const { data: product, isLoading, isError, error } = useQuery({
+    queryKey: ['product', numberId],
+    queryFn: () => getProductById(numberId!),
+    enabled: !!id,
+  })
 
-  const fetchProduct = () => {
-    setLoading(true);
-
-    const foundProduct = mockProduct.find(p => p.id === Number(id));
-
-    if (foundProduct) {
-      setProduct(foundProduct);
-      if (foundProduct.sizes && foundProduct.sizes.length > 0) {
-        setSelectedSize(foundProduct.sizes[0]);
-      }
-    }
-    setLoading(false);
-  };
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -106,7 +46,7 @@ const ProductDetails = () => {
   };
 
 
-  if (loading) {
+  if (isLoading) {
      return (
       <div className="h-96 w-full flex flex-col gap-4 items-center justify-center my-7 md:my-14">
         <Header />
@@ -117,6 +57,30 @@ const ProductDetails = () => {
     );
   }
 
+  if (isError) {
+    return (
+      <div className='min-h-screen flex flex-col'>
+        <Header />
+        <main className='flex-1 flex items-center justify-center'>
+          <div className='text-center'>
+            <h1 className='text-2xl font-bold mb-4 text-red-500'>
+              Failed to load product
+            </h1>
+            <p className='text-muted-foreground mb-6'>
+              {(error as Error).message || "Something went wrong while fetching the product."}
+            </p>
+            <Button
+              onClick={() => navigate('/')}
+            >
+              <ArrowLeft className='mr-2 h-4 w-4' />
+              Back to Home
+            </Button>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
   if (!product) {
     return (
       <div className='min-h-screen flex flex-col'>
@@ -124,7 +88,7 @@ const ProductDetails = () => {
         <main className='flex-1 flex items-center justify-center'>
           <div className='text-center'>
             <h1 className='text-2xl font-bold mb-4'>Product Not Found</h1>
-            <Button onClick={() => navigate('/')}>
+            <Button className='cursor-pointer' onClick={() => navigate('/')}>
               <ArrowLeft className='mr-2 h-4 w-4' />
               Back to Home
             </Button>
@@ -136,97 +100,103 @@ const ProductDetails = () => {
 
 
   return (
-    <div className='min-h-screen flex flex-col'>
+     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className='flex-1 container mx-auto px-4 py-8'>
-        <Button
-          variant="ghost"
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <Button 
+          variant="ghost" 
           onClick={() => navigate(-1)}
-          className='mb-6'
+          className="mb-6 cursor-pointer"
         >
-          <ArrowLeft className='mr-2 h-4 w-4' />
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
 
-        <div className='grid md:grid-cols-2 gap-8'>
-          <div className='bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-8 flex items-center justify-center'>
-            <img 
-              src={product.image_url} 
-              alt={product.name}
-              className='w-full h-auto max-h-[500px] object-contain drop-shadow-2xl' 
-            />
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Product Image */}
+          <div className="aaspect-square bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg overflow-hidden">
+            {product.image_url ? (
+              <img
+                src={product.image_url}
+                alt={product.name}
+                className="max-w-full max-h-full object-cover"
+              />
+            ) : (
+              <span className="text-gray-400 text-sm">No Image</span>
+            )}
           </div>
-          
-          <div className='space-y-6'>
+
+          {/* Product Details */}
+          <div className="space-y-6">
             <div>
-              <Badge variant="secondary" className='mb-2'>
+              <Badge variant="secondary" className="mb-2">
                 {product.category}
               </Badge>
-              <h1 className='text-3xl font-bold mb-2'>{product.name}</h1>
-              <div className='flex items-center'>
-                <Star className='h-5 w-5 fill-yellow-400 text-yellow-400'/>
-                <Star className='h-5 w-5 fill-yellow-400 text-yellow-400'/>
-                <Star className='h-5 w-5 fill-yellow-400 text-yellow-400'/>
-                <Star className='h-5 w-5 fill-yellow-400 text-yellow-400'/>
-                <Star className='h-5 w-5 fill-gray-300 text-gray-300'/>
+              <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="flex items-center">
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-5 w-5 fill-gray-300 text-gray-300" />
+                </div>
+                <span className="text-sm text-muted-foreground">(4.0)</span>
               </div>
-              <span className='text-sm text-muted-foreground'>(4.0)</span>
+              <p className="text-3xl font-bold text-primary">${product.price}</p>
             </div>
-            <p className='text-3xl font-bold text-primary'>${product.price}</p>
-          </div>
 
-          <div>
-            <h2 className='text-lg font-semibold mb-2'>Brand</h2>
-            <p className='text-muted-foreground'>{product.brand}</p>
-          </div>
-
-          <div>
-            <h2 className='text-lg font-semibold mb-2'>Description</h2>
-            <p className='text-muted-foreground leading-relaxed'>
-              {product.description || 'No description available for this product.'}
-            </p>
-          </div>
-
-          {/* size selection */}
-          <div>
-            <h2 className='text-lg font-semibold mb-3'>Available Sizes</h2>
-            <div className='flex flex-wrap gap-2'>
-              {product.sizes?.map((size) => (
-                <Button
-                  key={size}
-                  variant={selectedSize === size ? "default" : "outline"}
-                  onClick={() => setSelectedSize(size)}
-                  className='min-w-[60px]'
-                >
-                  {size}
-                </Button>
-              ))}
+            <div>
+              <h2 className="text-lg font-semibold mb-2">Brand</h2>
+              <p className="text-muted-foreground">{product.brand}</p>
             </div>
+
+            <div>
+              <h2 className="text-lg font-semibold mb-2">Description</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                {product.description || 'No description available for this product.'}
+              </p>
+            </div>
+
+            {/* Size Selection */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Available Sizes</h2>
+              <div className="flex flex-wrap gap-2">
+                {product.sizes?.map((size: string) => (
+                  <Button
+                    key={size}
+                    variant={selectedSize === size ? "default" : "outline"}
+                    onClick={() => setSelectedSize(size)}
+                    className="min-w-[60px]"
+                  >
+                    {size}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Stock Status */}
+            <div>
+              <p className="text-sm text-muted-foreground">
+                {product.stock > 0 ? (
+                  <span className="text-green-600 font-medium">In Stock ({product.stock} available)</span>
+                ) : (
+                  <span className="text-red-600 font-medium">Out of Stock</span>
+                )}
+              </p>
+            </div>
+
+            {/* Add to Cart Button */}
+            <Button 
+              size="lg"
+              className="w-full"
+              onClick={handleAddToCart}
+              disabled={product.stock === 0}
+            >
+              <ShoppingCart className="mr-2 h-5 w-5" />
+              Add to Cart
+            </Button>
           </div>
-
-
-          {/* stock */}
-          <div>
-            <p className='text-sm text-muted-foreground'>
-              {product.stock > 0 ? (
-                <span className='text-green-600 font-medium'>In stock ({product.stock} available)</span>
-              ) : (
-                <span className='text-red-600 font-medium'>Out of stock</span>
-              )}
-            </p>
-          </div>
-
-          {/* add to cart */}
-          <Button
-            size="lg"
-            className='w-full'
-            onClick={handleAddToCart}
-            disabled={product.stock === 0}
-          >
-            <ShoppingCart className='mr-2 h-5 w-5' />
-            Add to Cart
-          </Button>
-
         </div>
       </main>
       <Footer />
