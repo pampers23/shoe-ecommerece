@@ -34,7 +34,6 @@ const Header = () => {
         navigate('/login');
     }
 
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -45,13 +44,6 @@ const Header = () => {
                 </h1>
             </div>
 
-            {/* desktop nav */}
-            <nav className="hidden md:flex items-center space-x-6">
-                <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Men</a>
-                <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Women</a>
-                <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Kids</a>
-                <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Sale</a>
-            </nav>
 
             {/* search bar */}
             <div className="hidden md:flex items-center space-x-2 flex-1 max-w-sm mx-8">
@@ -68,17 +60,17 @@ const Header = () => {
             <div className="flex items-center space-x-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="hidden md:flex">
+                        <Button variant="ghost" size="icon" className="hidden md:flex cursor-pointer">
                             <UserCog className="h-5 w-5" />
                         </Button>
                     </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/profile")}>
                                 <User className="h-4 w-4 mr-2" />
                                 Profile
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={handleLogout}>
+                            <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
                                 <LogOut className="h-4 w-4 mr-2" />
                                 Logout
                             </DropdownMenuItem>
@@ -88,7 +80,7 @@ const Header = () => {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="relative"
+                    className="relative cursor-pointer"
                     onClick={() => navigate('/cart')}
                 >
                     <ShoppingCart className="h-5 w-5" />

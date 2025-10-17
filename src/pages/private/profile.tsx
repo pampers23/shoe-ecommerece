@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom"
 import Header from "@/components/header"
 
 
-
 const Profile = () => {
     const navigate = useNavigate();
 
@@ -70,7 +69,7 @@ const Profile = () => {
                         <span className="text-sm">Joined March 2023</span>
                     </div>
                     <Separator />
-                    <Button className="w-full">Edit Profile</Button>
+                    <Button className="w-full cursor-pointer" onClick={() => navigate("/profile/edit-profile")}>Edit Profile</Button>
                 </CardContent>
             </Card>
         </div>

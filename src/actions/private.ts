@@ -32,8 +32,7 @@ export async function getProductById(id: number) {
     if (error) throw new Error(error.message);
 
     let imageUrl = data.image_url;
-
-    // Only call getPublicUrl() if it's NOT already a full URL
+    
     if (!imageUrl.startsWith('http')) {
       const { data: publicUrl } = supabase
         .storage

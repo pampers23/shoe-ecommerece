@@ -3,9 +3,9 @@ import { ArrowRight } from 'lucide-react';
 
 const Hero = () => {
   return (
-    <section className="relative bg-gradient-to-r from-slate-900 to-slate-700 text-white flex">
+    <section className="relative bg-gradient-to-r from-slate-900 to-slate-700 text-white">
       <div className="container mx-auto px-4 py-24 lg:py-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center ml-25">
           <div className="space-y-8">
             <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
               Step Into

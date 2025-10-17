@@ -6,6 +6,8 @@ import Login from "@/pages/public/login";
 import SignUp from "@/pages/public/sign-up";
 import ProductDetails from "@/components/product-details";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import Profile from "@/pages/private/profile";
+import EditProfile from "@/pages/private/edit-profile";
 
 const AppRoutes = () => {
   return (
@@ -60,6 +62,24 @@ const AppRoutes = () => {
             element={
               <AuthGuard>
                 <ProductDetails />
+              </AuthGuard>
+            }
+          />
+
+          <Route
+            path="/profile"
+            element={
+              <AuthGuard>
+                <Profile />
+              </AuthGuard>
+            }
+          />
+
+          <Route
+            path="/profile/edit-profile"
+            element={
+              <AuthGuard>
+                <EditProfile />
               </AuthGuard>
             }
           />
