@@ -21,18 +21,33 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { toast } from "sonner"
 import { User, Mail, Phone, MapPin, Camera } from "lucide-react";
+import {  useQuery } from "@tanstack/react-query";
+import { getUserProfile } from "@/actions/private";
+import { Tailspin } from "ldrs/react"
 
 
 const EditProfile = () => {
     const navigate = useNavigate();
+
+    const getInitials = (name: string) => {
+        const parts = name.trim().split("")
+        const initials = parts.map((p) => p[0].toUpperCase()).join("")
+        return initials.slice(0, 2) ;
+    }
+
+    const { data: user, isPending } = useQuery({
+        queryKey: ['user-profile'],
+        queryFn: getUserProfile
+    })
+
     const form = useForm<ProfileSchema>({
         resolver: zodResolver(profileSchema),
-        defaultValues: {
-            name: "John Doe",
-            email: "john.doe@gmail.com",
-            phone: "1234567890",
-            address: "123 Main St, City, Country",
-        }
+        defaultValues: user?? {
+            name: "",
+            email: "",
+            phone: "",
+            address: ""
+        },
     });
 
     const onSubmit = (data: ProfileSchema) => {
@@ -40,6 +55,15 @@ const EditProfile = () => {
         toast.success("Profile updated successfully");
         navigate("/profile");
     }
+
+    if (isPending) {
+            return (
+                <div className="h-96 w-full flex flex-col gap-4 items-center justify-center my-7 md:my-14">
+                    <p className="text-sm text-muted-foreground animate-pulse">Loading products...</p>
+                    <Tailspin size="30" stroke="3" speed="0.9" color="#262E40" />
+                </div>
+            )
+        }
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-muted/20">
@@ -49,10 +73,13 @@ const EditProfile = () => {
                     <div className="text-center mb-8 animate-in fade-in slide-in-from-top duration-500">
                         <div className="relative inline-block mb-4">
                             <Avatar className="h-28 w-28 border-4 border-primary/10 shadow-lg">
-                                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" alt="Profile" />
-                                <AvatarFallback className="bg-primary/5">
-                                    <User className="h-14 w-14 text-muted-foreground" />
-                                </AvatarFallback>
+                                {user?.profile_image ? (
+                                    <AvatarImage src={user.profile_image} alt={user.name} />
+                                        ) : (
+                                            <AvatarFallback className="text-3xl bg-gray-300 text-gray-700 font-semibold">
+                                            {getInitials(user?.name || "U N")}
+                                            </AvatarFallback>
+                                        )}
                             </Avatar>
                             <Button className="absolute bottom-0 right-0 h-9 w-9 rounded-full bg-primary text-primary-foreground
                             shadow-lg hover:scale-110 transition-transform duration-200 flex items-center justify-center">

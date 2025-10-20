@@ -3,7 +3,7 @@ import { AuthError } from "@supabase/supabase-js";
 import type { LoginSchema, SignUpSchema } from "@/zod-schema";
 import { toast } from "sonner";
 
-export async function userSignUp({ firstName, lastName, email, password }:SignUpSchema ) {
+export async function userSignUp({ firstName, lastName, phone, address, email, password }:SignUpSchema ) {
     try {
         const { error } = await supabase.auth.signUp({
             email,
@@ -12,6 +12,8 @@ export async function userSignUp({ firstName, lastName, email, password }:SignUp
                 data: {
                     firstName,
                     lastName,
+                    phone,
+                    address
                 },
             },
         });

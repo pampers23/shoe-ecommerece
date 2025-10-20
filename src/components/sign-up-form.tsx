@@ -38,6 +38,8 @@ function SignUpForm() {
     defaultValues: {
       firstName: "",
       lastName: "",
+      phone: "",
+      address: "",
       email: "",
       password: "",
       confirmPassword: ""
@@ -82,6 +84,32 @@ function SignUpForm() {
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter your last name" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your phone number" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />  
+
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your address" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
