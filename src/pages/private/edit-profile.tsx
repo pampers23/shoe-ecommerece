@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileSchema, type ProfileSchema } from "@/zod-schema";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Card,
   CardContent,
@@ -21,42 +20,100 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { toast } from "sonner"
 import { User, Mail, Phone, MapPin, Camera } from "lucide-react";
-import {  useQuery } from "@tanstack/react-query";
-import { getUserProfile } from "@/actions/private";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUserProfile, updateUserProfile, updateUserProfileImage } from "@/actions/private";
 import { Tailspin } from "ldrs/react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRef, useState } from "react";
 
 
 const EditProfile = () => {
-    const navigate = useNavigate();
-
-    const getInitials = (name: string) => {
-        const parts = name.trim().split("")
-        const initials = parts.map((p) => p[0].toUpperCase()).join("")
-        return initials.slice(0, 2) ;
-    }
-
-    const { data: user, isPending } = useQuery({
-        queryKey: ['user-profile'],
-        queryFn: getUserProfile
-    })
+    const navigate = useNavigate(); 
+    const queryClient = useQueryClient();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [selectImage, setSelectImage] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    
+    const { data: user, isLoading } = useQuery({
+        queryKey: ["user-profile"],
+        queryFn: getUserProfile,
+    });
 
     const form = useForm<ProfileSchema>({
         resolver: zodResolver(profileSchema),
-        defaultValues: user?? {
-            name: "",
-            email: "",
-            phone: "",
-            address: ""
-        },
+        values: user
+            ? {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                address: user.address,
+                profile_image: user.profile_image,
+            }
+            : { 
+                name: "",
+                email: "",
+                phone: "",
+                address: "",
+                profile_image: "",
+            }
     });
 
-    const onSubmit = (data: ProfileSchema) => {
-        console.log(data);
-        toast.success("Profile updated successfully");
-        navigate("/profile");
+    const { mutate: changeAvatar, isPending } = useMutation({
+        mutationFn: async (file: File) => {
+            if (!user?.id) throw new Error("User not found");
+            return await updateUserProfileImage(file, user.id)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+            toast.success("Profile Image Uploaded!");
+        },
+        onError: (error) => {
+            toast.error("Failed to upload image.");
+            console.error(error);
+        }
+    })
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectImage(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
+
+    const onSubmit = async (data: ProfileSchema) => {
+        console.log("Triggered: ", data);
+        
+        try {
+            if (selectImage && user?.id) {
+                await updateUserProfileImage(selectImage, user.id)
+                changeAvatar(selectImage)
+                toast.success("Profile image update!")
+            }
+            await updateUserProfile({
+                userId: user!.id,
+                email: data.email,
+                firstName: data.name.split(" ")[0] || "",
+                lastName: data.name.split(" ")[1] || "",
+                phone: data.phone,
+                address: data.address,
+            });
+            toast.success("Profile updated successfully!");
+            queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+            navigate("/profile")
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to update profile!")
+        }
     }
 
-    if (isPending) {
+    const getInitials = (name: string) => {
+        const parts = name.trim().split(" ");
+        const initials = parts.map((p) => p[0].toUpperCase()).join("");
+        return initials.slice(0, 2);
+    }
+
+    if (isPending || isLoading) {
             return (
                 <div className="h-96 w-full flex flex-col gap-4 items-center justify-center my-7 md:my-14">
                     <p className="text-sm text-muted-foreground animate-pulse">Loading products...</p>
@@ -73,18 +130,32 @@ const EditProfile = () => {
                     <div className="text-center mb-8 animate-in fade-in slide-in-from-top duration-500">
                         <div className="relative inline-block mb-4">
                             <Avatar className="h-28 w-28 border-4 border-primary/10 shadow-lg">
-                                {user?.profile_image ? (
-                                    <AvatarImage src={user.profile_image} alt={user.name} />
-                                        ) : (
-                                            <AvatarFallback className="text-3xl bg-gray-300 text-gray-700 font-semibold">
-                                            {getInitials(user?.name || "U N")}
-                                            </AvatarFallback>
-                                        )}
+                                {user?.profile_image || user?.avatar_url ? (
+                                    <AvatarImage
+                                    src={previewUrl || user.profile_image || user.avatar_url}
+                                    alt={user.name}
+                                    />
+                                ) : (
+                                    <AvatarFallback className="text-3xl bg-gray-300 text-gray-700 font-semibold">
+                                    {getInitials(user?.name || "U N")}
+                                    </AvatarFallback>
+                                )}
                             </Avatar>
-                            <Button className="absolute bottom-0 right-0 h-9 w-9 rounded-full bg-primary text-primary-foreground
-                            shadow-lg hover:scale-110 transition-transform duration-200 flex items-center justify-center">
+                            <Button 
+                                className="absolute bottom-0 right-0 h-9 w-9 rounded-full bg-primary text-primary-foreground
+                                shadow-lg hover:scale-110 transition-transform duration-200 flex items-center justify-center cursor-pointer"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
                                 <Camera className="h-4 w-4" />
                             </Button>
+
+                            <input
+                                type="file"
+                                accept="image/*"
+                                ref={fileInputRef}
+                                hidden
+                                onChange={handleFileChange}
+                            />
                         </div>
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                             Edit Profile
@@ -94,7 +165,7 @@ const EditProfile = () => {
 
                     <Card className="border-border/50 shadow-xl animate-in fade-in slide-in-from-bottom duration-500">
                         <CardContent className="pt-8">
-                            <Form {...form}>
+                            <Form key={user?.id || "new-user"} {...form}>
                                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                                     <FormField
                                         control={form.control}
@@ -184,15 +255,15 @@ const EditProfile = () => {
                                     <div className="flex flex-col sm:flex-row gap-4 pt-6">
                                         <Button
                                             type="submit"
-                                            className="flex-1 h-11 hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-lg"
+                                            className="flex-1 h-11 hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
                                         >
-                                            Save Changes
+                                            {isPending ? "Saving..." : "Save"}
                                         </Button>
                                         <Button
                                             type="button"
                                             variant="outline"
                                             onClick={() => navigate("/profile")}
-                                            className="flex-1 h-11 hover:scale-[1.02] transition-all duration-200"
+                                            className="flex-1 h-11 hover:scale-[1.02] transition-all duration-200 cursor-pointer"
                                         >
                                             Cancel
                                         </Button>

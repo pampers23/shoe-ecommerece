@@ -20,11 +20,14 @@ export const loginSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
-export const profileSchema = z.object({
+export const  profileSchema = z.object({
   name: z.string().min(2, "Name is required").max(100, "Name is too long"),
   email: z.string().email("Invalid email address").max(100, "Email is too long"),
   phone: z.string().min(10, "Phone number is too short").max(11, "Phone number is too long"),
   address: z.string().min(5, "Address is too short").max(200, "Address is too long"),
+  profile_image: z.string()
+  .regex(/^https?:\/\/|^\/|^blob:/, "Invalid URL for profile image") // ✅ accepts http, https, /, or blob
+  .optional()
 })
 
 export type SignUpSchema = z.infer<typeof signUpSchema>;

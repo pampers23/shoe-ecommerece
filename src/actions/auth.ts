@@ -62,3 +62,18 @@ export async function userLogout() {
         toast.error(err.message)
     }
 }
+
+export async function LoginwithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo: "http://localhost:5173"
+        },
+    });
+
+    return data;        
+    if (error) {
+        const err = error as AuthError;
+        toast.error(err.message)
+    }
+}
