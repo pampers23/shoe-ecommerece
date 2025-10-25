@@ -2,20 +2,27 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, MapPin, Phone, Mail, Calendar, Package, CreditCard } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Mail, Package, CreditCard } from 'lucide-react';
 import { useNavigate } from "react-router-dom"
 import Header from "@/components/header"
+import { useQuery } from "@tanstack/react-query"
+import { getUserProfile } from "@/actions/private"
 
 
 const Profile = () => {
     const navigate = useNavigate();
+    const { data: user, isPending } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+    })
+
+    if (isPending) return <p>Loading...</p>
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,32 +48,30 @@ const Profile = () => {
                 <CardHeader className="text-center">
                     <div className="flex justify-center mb-4">
                         <Avatar className="h-24 w-24">
-                            <AvatarImage src="https://github.com/shadcn.png" alt="profile" />
-                            <AvatarFallback className="text-2xl">LM</AvatarFallback>
+                            <AvatarImage src={user?.profile_image} alt="profile" />
+                            <AvatarFallback className="text-2xl">
+                                {user?.name?.split(" ")[0]?.[0]}{user?.name?.split(" ")[1]?.[0] || ""}
+                            </AvatarFallback>
                         </Avatar>
                     </div>
-                    <CardTitle>Lance Mendoza</CardTitle>
-                    <CardDescription>Premium Member</CardDescription>
+                    <CardTitle>{user?.name}</CardTitle>
+                    {/* <CardDescription>Premium Member</CardDescription>
                     <Badge variant="secondary" className="mt-2">
                         Member since 2023
-                    </Badge>
+                    </Badge> */}
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center gap-3">
                         <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">lance.mendoza@gmail.com</span>
+                        <span className="text-sm">{user?.email}</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">+639876453210</span>
+                        <span className="text-sm">{user?.phone}</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">New York, NY</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">Joined March 2023</span>
+                        <span className="text-sm">{user?.address}</span>
                     </div>
                     <Separator />
                     <Button className="w-full cursor-pointer" onClick={() => navigate("/profile/edit-profile")}>Edit Profile</Button>
