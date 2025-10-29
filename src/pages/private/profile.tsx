@@ -8,7 +8,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, MapPin, Phone, Mail, Package, CreditCard } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Mail, Package } from 'lucide-react';
 import { useNavigate } from "react-router-dom"
 import Header from "@/components/header"
 import { useQuery } from "@tanstack/react-query"
@@ -139,50 +139,10 @@ const Profile = () => {
                 </CardContent>
             </Card>
 
-            {/* payment methonds */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <CreditCard className="h-5 w-5" />
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 border rounded-lg">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-8 bg-blue-600 rounded flex items-center justify-center">
-                                    <span className="text-white text-xs font-bold">VISA</span>
-                                </div>
-                                <div>
-                                    <p className="font-medium">•••• •••• •••• 4242</p>
-                                    <p className="text-xs text-muted-foreground">Expires 12/26</p>
-                                </div>
-                            </div>
-                            <Badge variant="secondary">
-                                Default
-                            </Badge>
 
-                            <div className="flex items-center justify-between p-4 rounded-lg">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-8 bg-red-600 rounded flex items-center justify-center">
-                                        <span className="text-white text-xs font-bold">MC</span>
-                                    </div>
-                                    <div>
-                                        <p className="font-medium">•••• •••• •••• 8888</p>
-                                        <p className="text-xs text-muted-foreground">Expires 08/25</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <Button variant="outline" className="w-full mt-4">
-                        Add Payment Method
-                    </Button>
-                </CardContent>
-            </Card>
 
             {/* account settings */}
-            <Card>
+            <Card className="mb-10">
                 <CardHeader>
                     <CardTitle>Account Settings</CardTitle>
                 </CardHeader>

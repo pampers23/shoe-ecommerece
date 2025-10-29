@@ -4,14 +4,14 @@ import { ArrowRight } from 'lucide-react';
 const Hero = () => {
   return (
     <section className="relative bg-gradient-to-r from-slate-900 to-slate-700 text-white">
-      <div className="container mx-auto px-4 py-24 lg:py-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center ml-25">
-          <div className="space-y-8">
-            <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center justify-items-center">
+          <div className="space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-8 text-center lg:text-left w-full max-w-2xl">
+            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-primary-foreground">
               Step Into
-              <span className="text-blue-400 block">Style & Comfort</span>
+              <span className="text-blue-400 block mt-1 sm:mt-2">Style & Comfort</span>
             </h1>
-            <p className="text-xl text-slate-300 max-w-lg">
+            <p className="text-sm xs:text-base sm:text-lg md:text-xl text-slate-300 mx-auto lg:mx-9 max-w-lg">
               Discover our premium collection of shoes designed for every occasion. 
               From casual sneakers to elegant dress shoes.
             </p>

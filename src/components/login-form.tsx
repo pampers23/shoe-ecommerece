@@ -89,7 +89,7 @@ function LoginForm(){
                   <FormItem className="grid gap-2">
                     <div className="flex justify-between items-center">
                       <FormLabel htmlFor="password">Password</FormLabel>
-                      <Link to="/forgot-password" className="text-sm underline underline-offset-2">
+                      <Link to="/forgot-password" className="text-sm underline underline-offset-2" >
                         Forgot Password?
                       </Link>
                     </div>

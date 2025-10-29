@@ -38,8 +38,8 @@ const Cart = () => {
                         </Button>
                     </div>
                 ) : (
-                    <div className="grid lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-2 space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                        <div className="lg:col-span-2 space-y-3 sm:space-y-4">
                             {
                                 items.map((item) => (
                                     <div 
@@ -103,18 +103,18 @@ const Cart = () => {
 
                         <div className="lg:col-span-1">
                             <div className="border rounded-lg p-6 bg-card sticky top-8">
-                                <h3 className="text-xl font-semibold mb-2">Order Summary</h3>
+                                <h3 className="text-lg sm:text-xl font-semibold mb-2">Order Summary</h3>
 
                                 <Separator />
 
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-sm sm:text-base">
                                     <div className="flex justify-between mt-2">
                                         <span>Subtotal</span>
                                         <span>${getTotalPrice().toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span>Shipping</span>
-                                        <span>Free</span>
+                                        <span className="text-green-600">Free</span>
                                     </div>
                                     <div className="flex justify-between mb-2">
                                         <span>Tax</span>
@@ -122,15 +122,24 @@ const Cart = () => {
                                     </div>
                                 </div>
 
-                                <Separator />
+                                <Separator className="mt-2 mb-2" />
 
-                                <div className="space-y-3">
-                                    <Button className="w-full" size="lg">
+                                <div className="flex justify-between items-center text-base sm:text-lg font-semibold mb-2 mt-2">
+                                    <span>Total</span>
+                                    <span>${(getTotalPrice() * 1.08).toFixed(2)}</span>
+                                </div>
+
+                                <div className="space-y-2 sm:space-y-3">
+                                    <Button 
+                                        className="w-full text-sm sm:text-base" 
+                                        size="lg"
+                                        onClick={() => navigate('/checkout')}
+                                    >
                                         Proceed To Checkout
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        className="w-full"
+                                        className="w-full text-sm sm:text-base"
                                         onClick={() => navigate('/index')}
                                     >
                                         Continue Shopping

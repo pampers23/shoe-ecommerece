@@ -8,6 +8,7 @@ import ProductDetails from "@/components/product-details";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Profile from "@/pages/private/profile";
 import EditProfile from "@/pages/private/edit-profile";
+import ForgotPassword from "@/pages/public/forgot-password";
 
 const AppRoutes = () => {
   return (
@@ -81,6 +82,15 @@ const AppRoutes = () => {
               <AuthGuard>
                 <EditProfile />
               </AuthGuard>
+            }
+          />
+
+          <Route
+            path="/forgot-password"
+            element={
+              <UnauthenticatedGuard>
+                <ForgotPassword />
+              </UnauthenticatedGuard>
             }
           />
       </Routes>
