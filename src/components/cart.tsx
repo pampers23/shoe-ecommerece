@@ -133,7 +133,7 @@ const Cart = () => {
                                     <Button 
                                         className="w-full text-sm sm:text-base" 
                                         size="lg"
-                                        onClick={() => navigate('/checkout')}
+                                        onClick={() => navigate('/cart/checkout')}
                                     >
                                         Proceed To Checkout
                                     </Button>

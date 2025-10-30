@@ -65,17 +65,12 @@ export async function userLogout() {
 
 export async function sendPasswordResetLink({ email }: { email: string }) {
   try {
-    const { data, error: fetchUserError } = await supabase
-      .from("registered_users")
-      .select("email")
-      .eq("email", email)
-      .limit(1);
-
+    const { data, error: fetchUserError } = await supabase.auth.resetPasswordForEmail(email)
     if (fetchUserError) {
       throw new Error(fetchUserError.message);
     }
 
-    if (!data || !data.length) {
+    if (!data) {
       throw new Error("No account found with that email");
     }
 
@@ -87,6 +82,27 @@ export async function sendPasswordResetLink({ email }: { email: string }) {
 
     toast.success("Password reset link has been sent!", {
       description: "Please check your email to continue",
+    });
+  } catch (error) {
+    const err = error as AuthError;
+    toast.error(err.message);
+  }
+}
+
+export async function authUpdatePassword({ password }: { password: string }) {
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    await supabase.auth.signOut();
+
+    toast.success("Password has been reset", {
+      description: "You can now log in with your new password.",
     });
   } catch (error) {
     const err = error as AuthError;

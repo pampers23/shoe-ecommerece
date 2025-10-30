@@ -9,6 +9,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Profile from "@/pages/private/profile";
 import EditProfile from "@/pages/private/edit-profile";
 import ForgotPassword from "@/pages/public/forgot-password";
+import UpdatePassword from "@/pages/public/auth/update-password";
+import Checkout from "@/pages/private/checkout";
 
 const AppRoutes = () => {
   return (
@@ -93,6 +95,25 @@ const AppRoutes = () => {
               </UnauthenticatedGuard>
             }
           />
+
+          <Route
+            path="/update-password"
+            element={
+              <AuthGuard>
+                <UpdatePassword />
+              </AuthGuard>
+            }
+          />
+
+          <Route
+            path="/cart/checkout"
+            element={
+              <AuthGuard>
+                <Checkout />
+              </AuthGuard>
+            }
+          />
+
       </Routes>
     </BrowserRouter>
   )
