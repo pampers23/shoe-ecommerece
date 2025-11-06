@@ -36,7 +36,7 @@ function UpdatePassword() {
   }
 
   if (!passwordResetState) {
-    return <Navigate to={"/admission/dashboard"} replace />;
+    return <Navigate to={"/index"} replace />;
   }
 
   return (

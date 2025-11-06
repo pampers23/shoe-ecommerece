@@ -20,7 +20,7 @@ const Cart = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => navigate('/index')}
-                    className="h-10 w-10"
+                    className="h-10 w-10 cursor-pointer"
                 >
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
@@ -131,7 +131,7 @@ const Cart = () => {
 
                                 <div className="space-y-2 sm:space-y-3">
                                     <Button 
-                                        className="w-full text-sm sm:text-base" 
+                                        className="w-full text-sm sm:text-base cursor-pointer" 
                                         size="lg"
                                         onClick={() => navigate('/cart/checkout')}
                                     >
@@ -139,7 +139,7 @@ const Cart = () => {
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        className="w-full text-sm sm:text-base"
+                                        className="w-full text-sm sm:text-base cursor-pointer"
                                         onClick={() => navigate('/index')}
                                     >
                                         Continue Shopping

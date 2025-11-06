@@ -2,6 +2,7 @@ import { supabase } from "@/lib/client";
 import { type User, AuthError } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { uploadProfileImage } from "./upload-image";
+import type { CreateOrder } from "@/type";
 
 export async function getProductsShoes() {
     try {
@@ -57,7 +58,6 @@ export async function getUserProfile() {
     if (error) throw new Error(error.message);
     const user = data.user;
 
-    // First, get base info from Supabase Auth
     const authProfile = {
       id: user.id,
       email: user.email || "",
@@ -67,7 +67,6 @@ export async function getUserProfile() {
       avatar_url: user.user_metadata?.avatar_url || null,
     };
 
-    // Then try to fetch extended info from your customers table
     const { data: customer } = await supabase
       .from("customers")
       .select("firstname, lastname, phone, address, profile_image")
@@ -150,7 +149,7 @@ export async function handleGoogleLogin(){
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "http://localhost:5173", // or your deployed URL
+      redirectTo: "http://localhost:5173",
     },
   });
 
@@ -182,5 +181,92 @@ export async function updateUserProfileImage(file: File, userId: string) {
     const err = error as AuthError;
     toast.error(err.message);
     throw err;  
+  }
+}
+
+export async function createOrder(orderData: CreateOrder) {
+  try {
+    const { customer_id, payment_method, total_amount, shipping_address, items } = orderData;
+    
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .insert([
+        {
+          customer_id,
+          payment_method,
+          total_amount,
+          status: payment_method === "cod" ? "pending" : "completed",
+          shipping_address,
+        },
+      ])
+      .select()
+      .single();
+
+    if (orderError) {
+      console.error("❌ Supabase order insert error details:", orderError);
+      alert(`Order insert error: ${orderError.message}`);
+      throw new Error(orderError.message);
+    }
+
+    const orderItems = items.map((item) => ({
+      order_id: order.id,
+      product_id: item.id,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+
+    console.log("🧾 Inserting order items:", orderItems);
+
+    console.log("🧾 DEBUG order items:", JSON.stringify(orderItems, null, 2));
+
+    const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
+
+    if (itemsError) throw new Error(itemsError.message);
+
+    return order;
+  } catch (error) {
+    const err = error as AuthError;
+    toast.error(err.message);
+    throw err;
+  }
+}
+
+export async function createOrderWithUser({
+  paymentMethod,
+  totalAmount,
+  address,
+  items,
+}: {
+  paymentMethod: string;
+  totalAmount: number;
+  address: string;
+  items: { id: number; quantity: number; price: number }[];
+}) {
+  try {
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error || !data?.user) {
+      toast.error("Please log in to complete your order");
+      return;
+    }
+
+    const orderPayload = {
+      customer_id: data.user.id,
+      payment_method: paymentMethod,
+      total_amount: totalAmount,
+      shipping_address: address?.trim() || "Not Provided",
+      items: items.map((item) => ({
+        id: String(item.id),
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    };
+
+    const response = await createOrder(orderPayload);
+    return response;
+  } catch (error) {
+    const err = error as AuthError;
+    toast.error(err.message || "An unexpected error occurred");
+    throw err;
   }
 }

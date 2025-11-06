@@ -9,73 +9,100 @@ import { ArrowLeft, CreditCard, Smartphone, Lock } from 'lucide-react';
 import { UseCarts } from '@/hooks/use-carts';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/header';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { createOrder, createOrderWithUser } from '@/actions/private';
+
 
 const Checkout = () => {
   const { items, getTotalPrice } = UseCarts();
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState('card');
+  const [address, setAddress] = useState('');
 
   const subtotal = getTotalPrice();
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
 
+  const mutation = useMutation({
+    mutationFn: createOrder,
+    onSuccess: () => {
+      toast.success('Order placed successfully')
+    },
+  })
+
+  const handleCompletePayment = async () => {
+    try {
+    await createOrderWithUser({
+      paymentMethod,
+      totalAmount: total,
+      address,
+      items,
+    });
+    toast.success("Order placed successfully!");
+  } catch {
+    toast.error("Failed to place your order");
+  }
+  }
+
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-2 sm:gap-4 mb-6 sm:mb-8">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/cart')}
-            className="h-10 w-10"
+            className="h-9 w-9 sm:h-10 sm:w-10 cursor-pointer"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
-          <h1 className="text-3xl font-bold">Checkout</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Checkout</h1>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Payment Section */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Payment Method Selection */}
-            <Card className="p-6 animate-fade-in">
-              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
+            <Card className="p-4 sm:p-6 animate-fade-in">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+                <CreditCard className="h-4 w-4 sm:h-5 sm:w-5" />
                 Payment Method
               </h2>
               
               <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
                     <RadioGroupItem value="card" id="card" />
-                    <Label htmlFor="card" className="flex-1 cursor-pointer flex items-center gap-2">
+                    <Label htmlFor="card" className="flex-1 cursor-pointer flex items-center gap-2 text-sm sm:text-base">
                       <CreditCard className="h-4 w-4" />
                       Credit / Debit Card
                     </Label>
                   </div>
                   
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
                     <RadioGroupItem value="paypal" id="paypal" />
-                    <Label htmlFor="paypal" className="flex-1 cursor-pointer flex items-center gap-2">
+                    <Label htmlFor="paypal" className="flex-1 cursor-pointer flex items-center gap-2 text-sm sm:text-base">
                       <Smartphone className="h-4 w-4" />
                       PayPal
                     </Label>
                   </div>
                   
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
-                    <RadioGroupItem value="apple" id="apple" />
-                    <Label htmlFor="apple" className="flex-1 cursor-pointer flex items-center gap-2">
+                  <div className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                    <RadioGroupItem value="gcash" id="gcash" />
+                    <Label htmlFor="gcash" className="flex-1 cursor-pointer flex items-center gap-2 text-sm sm:text-base">
                       <Smartphone className="h-4 w-4" />
-                      Apple Pay
+                      GCash
                     </Label>
                   </div>
                   
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
-                    <RadioGroupItem value="google" id="google" />
-                    <Label htmlFor="google" className="flex-1 cursor-pointer flex items-center gap-2">
+                  <div className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                    <RadioGroupItem value="cod" id="cod" />
+                    <Label htmlFor="cod" className="flex-1 cursor-pointer flex items-center gap-2 text-sm sm:text-base">
                       <Smartphone className="h-4 w-4" />
-                      Google Pay
+                      Cash on Delivery
                     </Label>
                   </div>
                 </div>
@@ -84,8 +111,8 @@ const Checkout = () => {
 
             {/* Card Details Form */}
             {paymentMethod === 'card' && (
-              <Card className="p-6 animate-fade-in">
-                <h3 className="text-lg font-semibold mb-4">Card Details</h3>
+              <Card className="p-4 sm:p-6 animate-fade-in">
+                <h3 className="text-base sm:text-lg font-semibold mb-4">Card Details</h3>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="cardNumber">Card Number</Label>
@@ -131,8 +158,8 @@ const Checkout = () => {
             )}
 
             {/* Billing Address */}
-            <Card className="p-6 animate-fade-in">
-              <h3 className="text-lg font-semibold mb-4">Billing Address</h3>
+            <Card className="p-4 sm:p-6 animate-fade-in">
+              <h3 className="text-base sm:text-lg font-semibold mb-4">Billing Address</h3>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="address">Street Address</Label>
@@ -140,6 +167,8 @@ const Checkout = () => {
                     id="address"
                     placeholder="123 Main St"
                     className="mt-1"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                   />
                 </div>
                 
@@ -188,14 +217,14 @@ const Checkout = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <Card className="p-5 sticky top-1 animate-fade-in">
-              <h3 className="text-xl font-semibold">Order Summary</h3>
+            <Card className="p-4 sm:p-6 lg:sticky lg:top-8 animate-fade-in">
+              <h3 className="text-lg sm:text-xl font-semibold">Order Summary</h3>
               
               <Separator />
               
-              <div className="space-y-2 max-h-64 overflow-auto">
+              <div className="space-y-2 sm:space-y-3 max-h-48 sm:max-h-64 overflow-auto">
                 {items.map((item) => (
-                  <div key={`${item.id}-${item.size}`} className="flex justify-between text-sm">
+                  <div key={`${item.id}-${item.size}`} className="flex justify-between text-xs sm:text-sm gap-2">
                     <div className="flex-1">
                       <p className="font-medium">{item.name}</p>
                       <p className="text-muted-foreground text-xs">
@@ -232,9 +261,14 @@ const Checkout = () => {
                 <span>${total.toFixed(2)}</span>
               </div>
               
-              <Button className="w-full" size="lg">
-                <Lock className="h-4 w-4 mr-2" />
-                Complete Payment
+              <Button 
+                className="w-full cursor-pointer" 
+                size="lg"
+                onClick={handleCompletePayment}
+                disabled={mutation.isPending}
+              >
+                <Lock className="h-4 w-4 mr-2" /> 
+                {mutation.isPending ? 'Processing...' : 'Complete Payment'}
               </Button>
               
               <p className="text-xs text-center text-muted-foreground">

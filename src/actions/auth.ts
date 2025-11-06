@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 export async function userSignUp({ firstName, lastName, phone, address, email, password }:SignUpSchema ) {
     try {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -17,6 +17,23 @@ export async function userSignUp({ firstName, lastName, phone, address, email, p
                 },
             },
         });
+
+        if (!error && data.user) {
+          await supabase.from("customers").insert([
+            {
+              id: data.user.id,
+              email,
+              lastName,
+              firstName,
+              phone,
+            }
+          ])
+        }
+
+        if (error?.message.includes("User already registered")) {
+          toast.error("This email is already registered. Please log in instead.");
+          return;
+        }
 
         if (error) {
             throw new Error(error.message);
@@ -65,7 +82,9 @@ export async function userLogout() {
 
 export async function sendPasswordResetLink({ email }: { email: string }) {
   try {
-    const { data, error: fetchUserError } = await supabase.auth.resetPasswordForEmail(email)
+    const { data, error: fetchUserError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "http://localhost:5173/update-password"
+    })
     if (fetchUserError) {
       throw new Error(fetchUserError.message);
     }
@@ -103,6 +122,25 @@ export async function authUpdatePassword({ password }: { password: string }) {
 
     toast.success("Password has been reset", {
       description: "You can now log in with your new password.",
+    });
+  } catch (error) {
+    const err = error as AuthError;
+    toast.error(err.message);
+  }
+}
+
+export async function updatePassword({ password }: { password: string }) {
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    toast.success("Password updated!", {
+      description: "Your password has been changed successfully.",
     });
   } catch (error) {
     const err = error as AuthError;

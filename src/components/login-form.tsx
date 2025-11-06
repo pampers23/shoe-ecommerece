@@ -34,7 +34,7 @@ function LoginForm(){
     mutationFn: userLogin,
     onSuccess: (data) => {
       console.log('Login successful', data?.session);
-      navigate("/", { replace: true });
+      navigate("/index", { replace: true });
     }
   });
 
