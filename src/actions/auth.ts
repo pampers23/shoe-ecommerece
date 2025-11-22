@@ -152,13 +152,10 @@ export async function LoginwithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: "http://localhost:5173"
+            redirectTo: import.meta.env.VITE_APP_URL || "http://localhost:5173"
         },
     });
 
-    return data;        
-    if (error) {
-        const err = error as AuthError;
-        toast.error(err.message)
-    }
+    if (error) throw new Error(error.message);
+    return data;
 }

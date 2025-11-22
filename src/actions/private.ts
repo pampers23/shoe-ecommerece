@@ -204,25 +204,40 @@ export async function createOrder(orderData: CreateOrder) {
 
     if (orderError) {
       console.error("❌ Supabase order insert error details:", orderError);
-      alert(`Order insert error: ${orderError.message}`);
       throw new Error(orderError.message);
     }
 
     const orderItems = items.map((item) => ({
       order_id: order.id,
-      product_id: item.id,
+      product_id: item.id, // Keep as number
       quantity: item.quantity,
       price: item.price,
     }));
 
     console.log("🧾 Inserting order items:", orderItems);
 
-    console.log("🧾 DEBUG order items:", JSON.stringify(orderItems, null, 2));
+    const { error: itemsError } = await supabase
+      .from("order_items")
+      .insert(orderItems);
 
-    const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
+    if (itemsError) {
+      console.error("❌ Order items insert error:", itemsError);
+      throw new Error(itemsError.message);
+    }
 
-    if (itemsError) throw new Error(itemsError.message);
+    for (const item of items) {
+      const { error: stockError } = await supabase.rpc('decrease_stock', {
+        product_id: item.id,
+        quantity: item.quantity,
+      });
 
+      if (stockError) {
+        console.error("❌ Stock update error:", stockError);
+        toast.error("Failed to update stock for product ID " + item.id);
+      }
+    }
+
+    toast.success("Order created successfully!");
     return order;
   } catch (error) {
     const err = error as AuthError;
@@ -255,11 +270,7 @@ export async function createOrderWithUser({
       payment_method: paymentMethod,
       total_amount: totalAmount,
       shipping_address: address?.trim() || "Not Provided",
-      items: items.map((item) => ({
-        id: String(item.id),
-        quantity: item.quantity,
-        price: item.price,
-      })),
+      items: items, // Don't transform - keep as numbers
     };
 
     const response = await createOrder(orderPayload);

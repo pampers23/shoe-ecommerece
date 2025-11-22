@@ -21,7 +21,7 @@ export type ProductDetail = {
  }
 
 export type OrderItem = {
-    id: string;
+    id: number;
     quantity: number;
     price: number;
 }

@@ -12,6 +12,8 @@ import Header from '@/components/header';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { createOrder, createOrderWithUser } from '@/actions/private';
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
+
 
 
 const Checkout = () => {
@@ -24,6 +26,8 @@ const Checkout = () => {
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
 
+  const supabase = useSupabaseClient();
+
   const mutation = useMutation({
     mutationFn: createOrder,
     onSuccess: () => {
@@ -31,19 +35,72 @@ const Checkout = () => {
     },
   })
 
-  const handleCompletePayment = async () => {
-    try {
-    await createOrderWithUser({
-      paymentMethod,
-      totalAmount: total,
-      address,
-      items,
-    });
-    toast.success("Order placed successfully!");
-  } catch {
-    toast.error("Failed to place your order");
+ const handleCompletePayment = async () => {
+  try {
+    
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      toast.error("You must be logged in to place an order.");
+      return;
+    }
+
+    if (paymentMethod === "cod") {
+      // ✅ Cash on Delivery
+      await createOrderWithUser({
+        paymentMethod,
+        totalAmount: total,
+        address,
+        items,
+      });
+      toast.success("Order placed successfully!");
+      return;
+    }
+
+    // ✅ Online Payments (Stripe)
+    if (["card", "gcash", "grabpay"].includes(paymentMethod)) {
+      const orderPayload = {
+        items: items.map((item) => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        order_id: "ORD-" + Date.now(),
+        paymentMethod
+      };
+
+      const response = await fetch(
+        "https://fmlyoznjwdgeaufjcloo.functions.supabase.co/create-checkout-session",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`, // ✅ important
+          },
+          body: JSON.stringify(orderPayload),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.text();
+        console.error("Stripe error:", error);
+        toast.error("Failed to start checkout.");
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url; // ✅ Redirect to Stripe
+      } else {
+        toast.error("No checkout URL returned from server.");
+      }
+    }
+  } catch (error) {
+    console.error("Payment error:", error);
+    toast.error("Failed to place your order.");
   }
-  }
+};
 
 
   return (
